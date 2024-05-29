@@ -43,7 +43,7 @@ const UncontrolledForm = () => {
     <form onSubmit={handleSubmit(onSubmit)} className="form">
       <div>
         <select {...register('userType')} className="form__field">
-          <option value="">Select user type</option>
+          <option value="">Tipo de usuario</option>
           <option value="professional">Professional</option>
           <option value="particular">Particular</option>
         </select>

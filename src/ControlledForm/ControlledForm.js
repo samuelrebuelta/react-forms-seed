@@ -17,7 +17,9 @@ const ControlledForm = () => {
       then: () => Yup.string().required('Campo obligatorio'),
       otherwise: () => Yup.string().notRequired()
     }),
-    privacyPolicy: Yup.bool().oneOf([true], 'You must accept the privacy policy').required('Campo obligatorio')
+    privacyPolicy: Yup.bool()
+      .oneOf([true], 'You must accept the privacy policy')
+      .required('Campo obligatorio')
   });
 
   // Form submit handler
@@ -43,7 +45,7 @@ const ControlledForm = () => {
         <Form className="form">
           <div>
             <Field as="select" name="userType" className="form__field">
-              <option value="">Select user type</option>
+              <option value="">Tipo de usuario</option>
               <option value="professional">Professional</option>
               <option value="particular">Particular</option>
             </Field>
@@ -82,9 +84,11 @@ const ControlledForm = () => {
             <ErrorMessage className="form__field--error" name="confirmPassword" component="label" />
           </div>
 
-          <div className="form__field-checkbox">
-            <Field name="privacyPolicy" type="checkbox" />
-            <label htmlFor="privacyPolicy" className="form-check-label">Acepto la política de privacidad</label>
+          <div>
+            <div className="form__field-checkbox">
+              <Field name="privacyPolicy" type="checkbox" />
+              <label htmlFor="privacyPolicy" className="form-check-label">Acepto la política de privacidad</label>
+            </div>
             <ErrorMessage className="form__field--error" name="privacyPolicy" component="label" />
           </div>
 
