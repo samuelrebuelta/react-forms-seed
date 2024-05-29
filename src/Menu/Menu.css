@@ -1,0 +1,28 @@
+.menu ul {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  list-style-type: none;
+  padding: 10px;
+  margin: 0;
+}
+
+.menu ul li {
+  margin: 15px 0;
+}
+
+.menu ul li a {
+  text-decoration: none;
+  color: #000000;
+  font-size: 1.1em;
+  display: block;
+  padding: 10px;
+  border-radius: 4px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.menu ul li a:hover,
+.menu ul li.active a {
+  background-color: #575757;
+  color: white;
+}

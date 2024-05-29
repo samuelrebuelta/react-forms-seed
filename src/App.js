@@ -1,25 +1,26 @@
-import logo from './logo.svg';
 import './App.css';
+import { Navigate, Routes, Route } from 'react-router-dom';
+import Menu from './Menu/Menu';
+import NoLibraryForm from './NoLibraryForm/NoLibraryForm';
+import NoLibraryFormNew from './NoLibraryFormNew/NoLibraryFormNew';
+import ControlledForms from './ControlledForm/ControlledForm';
+import UncontrolledForms from './UncontrolledForm/UncontrolledForm';
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app">
+      <Menu />
+      <div className="main-content">
+        <Routes>
+          <Route path="/" element={<Navigate to="/no-library-form" replace />} />
+          <Route path="/no-library-form" element={<NoLibraryForm />} />
+          <Route path="/no-library-form-new" element={<NoLibraryFormNew />} />
+          <Route path="/controlled-form" element={<ControlledForms />} />
+          <Route path="/uncontrolled-form" element={<UncontrolledForms />} />
+        </Routes>
+      </div>
     </div>
   );
-}
+};
 
 export default App;
