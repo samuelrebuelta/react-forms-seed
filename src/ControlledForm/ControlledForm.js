@@ -18,7 +18,7 @@ const ControlledForm = () => {
       otherwise: () => Yup.string().notRequired()
     }),
     privacyPolicy: Yup.bool()
-      .oneOf([true], 'You must accept the privacy policy')
+      .oneOf([true], 'Debes aceptar la política de privacidad')
       .required('Campo obligatorio')
   });
 
