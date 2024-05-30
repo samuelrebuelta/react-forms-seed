@@ -1,53 +1,59 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // Ejemplo de formulario sin librerías
 const NoLibraryForm = () => {
   // Form state
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: ''
+  const [form, setForm] = useState({
+    firstName: { value: undefined, error: undefined, dirty: false },
+    lastName: { value: undefined, error: undefined, dirty: false },
+    email: { value: undefined, error: undefined, dirty: false },
+    password: { value: undefined, error: undefined, dirty: false }
   });
 
-  // Errors state
-  const [errors, setErrors] = useState({});
-
-  // Form validation
-  const validate = () => {
-    const newErrors = {};
-    if (!formData.firstName) { newErrors.firstName = 'El nombre es requerido'; }
-    if (!formData.lastName) { newErrors.lastName = 'El apellido es requerido'; }
-    if (!formData.email) {
-      newErrors.email = 'El email es requerido';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'El email no es válido';
+  // Field validation
+  const validateField = (name, value) => {
+    switch (name) {
+      case 'firstName':
+        return !value ? 'El nombre es requerido' : '';
+      case 'lastName':
+        return !value ? 'El apellido es requerido' : '';
+      case 'email':
+        return !value ? 'El email es requerido' : !/\S+@\S+\.\S+/.test(value) ? 'El email no es válido' : '';
+      case 'password':
+        return !value ? 'La contraseña es requerida' : value.length < 8 ? 'La contraseña debe tener al menos 8 caracteres' : '';
+      default:
+        return '';
     }
-    if (!formData.password) {
-      newErrors.password = 'La contraseña es requerida';
-    } else if (formData.password.length < 8) {
-      newErrors.password = 'La contraseña debe tener al menos 8 caracteres';
-    }
-    return newErrors;
   };
+
+  // Initial validation
+  useEffect(() => {
+    isFormValid();
+  }, []);
 
   // Field change handler
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
+    const newFormValue = { ...form }
+    // Update field status
+    newFormValue[name] = {
+      value,
+      error: validateField(name, value),
+      dirty: true,
+    };
+    setForm({ ...newFormValue });
   };
 
   // Form submit handler
   const handleSubmit = (e) => {
     e.preventDefault();
-    const newErrors = validate();
-    setErrors(newErrors);
-    if (Object.keys(newErrors).length === 0) {
-      console.log('Formulario enviado:', formData); 
-    }
+    console.log('Formulario enviado:', form);
+  };
+
+  // Check if there are any errors and all fields are dirty
+  const isFormValid = () => {
+    if (!form) { return false };
+    return !Object.values(form).some(val => val.error) && Object.values(form).every(value => value.dirty);
   };
 
   return (
@@ -55,19 +61,19 @@ const NoLibraryForm = () => {
       className="form"
       onSubmit={handleSubmit}
     >
-      <input className="form__field" placeholder="Nombre" type="text" name="firstName" value={formData.firstName } onChange={handleChange } />
-      {errors.firstName && <label className="form__field--error">{errors.firstName}</label>}
+      <input className="form__field" placeholder="Nombre" type="text" name="firstName" value={form.firstName.value } onChange={handleChange} onBlur={handleChange} />
+      {form.firstName.error && form.firstName.dirty && <label className="form__field--error">{form.firstName.error}</label>}
 
-      <input className="form__field" placeholder="Apellido" type="text" name="lastName" value={formData.lastName } onChange={handleChange } />
-      {errors.lastName && <label className="form__field--error">{errors.lastName}</label>}
+      <input className="form__field" placeholder="Apellido" type="text" name="lastName" value={form.lastName.value } onChange={handleChange} onBlur={handleChange} />
+      {form.lastName.error && form.lastName.dirty && <label className="form__field--error">{form.lastName.error}</label>}
 
-      <input className="form__field" placeholder="Email" type="email" name="email" value={formData.email} onChange={handleChange} />
-      {errors.email && <label className="form__field--error">{errors.email}</label>}
+      <input className="form__field" placeholder="Email" type="email" name="email" value={form.email.value} onChange={handleChange} onBlur={handleChange} />
+      {form.email.error && form.email.dirty && <label className="form__field--error">{form.email.error}</label>}
 
-      <input className="form__field" placeholder="Contraseña" type="password" name="password" value={formData.password} onChange={handleChange} />
-      {errors.password && <label className="form__field--error">{errors.password}</label>}
+      <input className="form__field" placeholder="Contraseña" type="password" name="password" value={form.password.value} onChange={handleChange} onBlur={handleChange} />
+      {form.password.error && form.password.dirty && <label className="form__field--error">{form.password.error}</label>}
 
-      <button className="form__submit" type="submit">Registrar</button>
+      <button className="form__submit" disabled={!isFormValid()} type="submit">Registrar</button>
     </form>
   );
 }
