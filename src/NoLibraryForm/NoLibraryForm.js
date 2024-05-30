@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { validateField } from "../NoLibraryFormNew/utils";
 
 // Ejemplo de formulario sin librerías
-const NoLibraryForm = () => {
+function NoLibraryForm() {
   // Form state
   const [form, setForm] = useState({
     firstName: { value: undefined, error: undefined, dirty: false },
@@ -9,27 +10,6 @@ const NoLibraryForm = () => {
     email: { value: undefined, error: undefined, dirty: false },
     password: { value: undefined, error: undefined, dirty: false }
   });
-
-  // Field validation
-  const validateField = (name, value) => {
-    switch (name) {
-      case 'firstName':
-        return !value ? 'El nombre es requerido' : '';
-      case 'lastName':
-        return !value ? 'El apellido es requerido' : '';
-      case 'email':
-        return !value ? 'El email es requerido' : !/\S+@\S+\.\S+/.test(value) ? 'El email no es válido' : '';
-      case 'password':
-        return !value ? 'La contraseña es requerida' : value.length < 8 ? 'La contraseña debe tener al menos 8 caracteres' : '';
-      default:
-        return '';
-    }
-  };
-
-  // Initial validation
-  useEffect(() => {
-    isFormValid();
-  }, []);
 
   // Field change handler
   const handleChange = (e) => {
@@ -61,16 +41,48 @@ const NoLibraryForm = () => {
       className="form"
       onSubmit={handleSubmit}
     >
-      <input className="form__field" placeholder="Nombre" type="text" name="firstName" value={form.firstName.value } onChange={handleChange} onBlur={handleChange} />
+      <input
+        className="form__field"
+        placeholder="Nombre"
+        type="text"
+        name="firstName"
+        value={form.firstName.value }
+        onChange={handleChange}
+        onBlur={handleChange}
+      />
       {form.firstName.error && form.firstName.dirty && <label className="form__field--error">{form.firstName.error}</label>}
 
-      <input className="form__field" placeholder="Apellido" type="text" name="lastName" value={form.lastName.value } onChange={handleChange} onBlur={handleChange} />
+      <input
+        className="form__field"
+        placeholder="Apellido"
+        type="text"
+        name="lastName"
+        value={form.lastName.value }
+        onChange={handleChange}
+        onBlur={handleChange}
+      />
       {form.lastName.error && form.lastName.dirty && <label className="form__field--error">{form.lastName.error}</label>}
 
-      <input className="form__field" placeholder="Email" type="email" name="email" value={form.email.value} onChange={handleChange} onBlur={handleChange} />
+      <input
+        className="form__field"
+        placeholder="Email"
+        type="email"
+        name="email"
+        value={form.email.value}
+        onChange={handleChange}
+        onBlur={handleChange}
+      />
       {form.email.error && form.email.dirty && <label className="form__field--error">{form.email.error}</label>}
 
-      <input className="form__field" placeholder="Contraseña" type="password" name="password" value={form.password.value} onChange={handleChange} onBlur={handleChange} />
+      <input
+        className="form__field"
+        placeholder="Contraseña"
+        type="password"
+        name="password"
+        value={form.password.value}
+        onChange={handleChange}
+        onBlur={handleChange}
+      />
       {form.password.error && form.password.dirty && <label className="form__field--error">{form.password.error}</label>}
 
       <button className="form__submit" disabled={!isFormValid()} type="submit">Registrar</button>

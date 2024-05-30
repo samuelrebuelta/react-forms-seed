@@ -1,80 +1,83 @@
-import { useActionState, useEffect } from 'react'
+import { useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
+import { submitForm, validateField } from './utils';
 
 // Ejemplo de formulario sin librerías utilizando el nuevo useActionState (experimental)
-const NoLibraryFormNew = () => {
+function NoLibraryFormNew () {
   // Handle form
-  const updateFormAction = async (previousState, event) => {
-    const { name, value } = event.target;
-    const formValue = { ...previousState }
-    // Update field status
-    formValue[name] = {
-      value,
-      error: validateField(name, value),
-      dirty: true,
+  const updateFormAction = async (previousState, formData) => {
+    const newFormValue = {
+      firstName: { value: formData.get('firstName'), error: validateField('firstName', formData.get('firstName')) },
+      lastName: { value: formData.get('lastName'), error: validateField('lastName', formData.get('lastName')) },
+      email: { value: formData.get('email'), error: validateField('email', formData.get('email')) },
+      password: { value: formData.get('password'), error: validateField('password', formData.get('password')) },
     };
-    
-    return formValue;
-  };
 
-  // Field validation
-  const validateField = (name, value) => {
-    switch (name) {
-      case 'firstName':
-        return !value ? 'El nombre es requerido' : '';
-      case 'lastName':
-        return !value ? 'El apellido es requerido' : '';
-      case 'email':
-        return !value ? 'El email es requerido' : !/\S+@\S+\.\S+/.test(value) ? 'El email no es válido' : '';
-      case 'password':
-        return !value ? 'La contraseña es requerida' : value.length < 8 ? 'La contraseña debe tener al menos 8 caracteres' : '';
-      default:
-        return '';
-    }
+    // Simulate api call
+    await submitForm(newFormValue);
+
+    return newFormValue;
   };
 
   // Use action state to handle form
   const [form, formAction] = useActionState(updateFormAction, {
-    firstName: {},
-    lastName: {},
-    email: {},
-    password: {},
+    firstName: { value: '', error: undefined, dirty: false },
+    lastName: { value: '', error: undefined, dirty: false },
+    email: { value: '', error: undefined, dirty: false },
+    password: { value: '', error: undefined, dirty: false }
   });
-
-  // Check if there are any errors and all fields are dirty
-  const isFormValid = () => {
-    if (!form) { return false };
-    return !Object.values(form).some(val => val.error) && Object.values(form).every(value => value.dirty);
-  };
-
-  // Form submit handler
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Formulario enviado:', form);
-  };
-
-  useEffect(() => {
-    isFormValid();
-  }, []);
 
   return (
     <form
       className="form"
-      onSubmit={handleSubmit}
+      action={formAction}
     >
-      <input className="form__field" placeholder="Nombre" type="text" name="firstName" onChange={formAction} onBlur={formAction} />
-      {form?.firstName?.error && form.firstName.dirty && <label className="form__field--error">Este campo es obligatorio</label>}
+      <input
+        className="form__field"
+        placeholder="Nombre"
+        type="text"
+        name="firstName"
+        defaultValue={form.firstName.value}
+      />
+      {form?.firstName?.error && <label className="form__field--error">{form.firstName.error}</label>}
 
-      <input className="form__field" placeholder="Apellido" type="text" name="lastName" onChange={formAction} onBlur={formAction} />
-      {form?.lastName?.error && form.firstName.dirty && <label className="form__field--error">Este campo es obligatorio</label>}
+      <input
+        className="form__field"
+        placeholder="Apellido"
+        type="text"
+        name="lastName"
+        defaultValue={form.lastName.value}
+      />
+      {form?.lastName?.error && <label className="form__field--error">{form.lastName.error}</label>}
 
-      <input className="form__field" placeholder="Email" type="email" name="email" onChange={formAction} onBlur={formAction} />
-      {form?.email?.error && form.firstName.dirty && <label className="form__field--error">Introduce un email válido</label>}
+      <input
+        className="form__field"
+        placeholder="Email"
+        type="email"
+        name="email"
+        defaultValue={form.email.value}
+      />
+      {form?.email?.error && <label className="form__field--error">{form.email.error}</label>}
 
-      <input className="form__field" placeholder="Contraseña" type="password" name="password" onChange={formAction} onBlur={formAction} />
-      {form?.password?.error && form.firstName.dirty && <label className="form__field--error">La contraseña debe tener al menos 8 caracteres</label>}
+      <input
+        className="form__field"
+        placeholder="Contraseña"
+        type="password"
+        name="password"
+        defaultValue={form.password.value}
+      />
+      {form?.password?.error && <label className="form__field--error">{form.password.error}</label>}
 
-      <button className="form__submit" type="submit" disabled={!isFormValid()}>Registrar</button>
+      <SubmitButton />
     </form>
+  );
+}
+
+function SubmitButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <button className="form__submit" type="submit" disabled={pending}>{pending ? 'Cargando...' : 'Registrar'}</button>
   );
 }
 
