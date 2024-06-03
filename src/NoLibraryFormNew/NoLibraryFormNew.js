@@ -21,10 +21,10 @@ function NoLibraryFormNew () {
 
   // Use action state to handle form
   const [form, formAction] = useActionState(updateFormAction, {
-    firstName: { value: '', error: undefined, dirty: false },
-    lastName: { value: '', error: undefined, dirty: false },
-    email: { value: '', error: undefined, dirty: false },
-    password: { value: '', error: undefined, dirty: false }
+    firstName: { value: '', error: undefined },
+    lastName: { value: '', error: undefined },
+    email: { value: '', error: undefined },
+    password: { value: '', error: undefined }
   });
 
   return (
