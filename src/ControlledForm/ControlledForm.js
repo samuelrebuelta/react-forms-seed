@@ -7,19 +7,20 @@ const ControlledForm = () => {
   // Form validation schema
   const validationSchema = Yup.object({
     userType: Yup.string().required('Campo obligatorio'),
-    firstName: Yup.string().required('Campo obligatorio'),
-    lastName: Yup.string().required('Campo obligatorio'),
-    email: Yup.string().email('Dirección de correo inválida').required('Campo obligatorio'),
-    password: Yup.string().required('Campo obligatorio'),
-    confirmPassword: Yup.string().oneOf([Yup.ref('password'), null], 'Las contraseñas no coinciden').required('Campo obligatorio'),
-    companyName: Yup.string().when('userType', {
-      is: () => 'professional',
+    userName: Yup.string().when('userType', {
+      is: 'particular',
       then: () => Yup.string().required('Campo obligatorio'),
       otherwise: () => Yup.string().notRequired()
     }),
-    privacyPolicy: Yup.bool()
-      .oneOf([true], 'Debes aceptar la política de privacidad')
-      .required('Campo obligatorio')
+    companyName: Yup.string().when('userType', {
+      is: 'professional',
+      then: () => Yup.string().required('Campo obligatorio'),
+      otherwise: () => Yup.string().notRequired()
+    }),
+    email: Yup.string().email('Dirección de correo inválida').required('Campo obligatorio'),
+    password: Yup.string().required('Campo obligatorio'),
+    confirmPassword: Yup.string().oneOf([Yup.ref('password'), null], 'Las contraseñas no coinciden').required('Campo obligatorio'),
+    privacyPolicy: Yup.bool().oneOf([true], 'Es obligatorio aceptar la política de privacidad'),
   });
 
   // Form submit handler
@@ -30,18 +31,18 @@ const ControlledForm = () => {
   return (
     <Formik
       initialValues={{
-        firstName: '',
-        lastName: '',
+        userType: '',
+        companyName: '',
+        userName: '',
         email: '',
         password: '',
         confirmPassword: '',
-        userType: '',
-        companyName: ''
+        privacyPolicy: false,
       }}
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
     >
-      {({ values, isValid, dirty }) => (
+      {({ values, isValid, dirty,  }) => (
         <Form className="form">
           <div>
             <Field as="select" name="userType" className="form__field">
@@ -59,15 +60,12 @@ const ControlledForm = () => {
             </div>
           )}
 
-          <div>
-            <Field name="firstName" type="text" className="form__field" placeholder="Nombre" />
-            <ErrorMessage className="form__field--error" name="firstName" component="label" />
-          </div>
-
-          <div>
-            <Field name="lastName" type="text" className="form__field" placeholder="Apellido" />
-            <ErrorMessage className="form__field--error" name="lastName" component="label" />
-          </div>
+          {values.userType === 'particular' && (
+            <div>
+              <Field name="userName" type="text" className="form__field" placeholder="Nombre" />
+              <ErrorMessage className="form__field--error" name="userName" component="label" />
+            </div>
+          )}
 
           <div>
             <Field name="email" type="email" className="form__field" placeholder="Email" />
@@ -92,7 +90,7 @@ const ControlledForm = () => {
             <ErrorMessage className="form__field--error" name="privacyPolicy" component="label" />
           </div>
 
-          <button className="form__submit" disabled={!isValid || !dirty } type="submit">Registrar</button>
+          <button className="form__submit" type="submit" disabled={!isValid || !dirty}>Registrar</button>
         </Form>
       )}
     </Formik>
