@@ -1,4 +1,3 @@
-import React from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
@@ -8,27 +7,26 @@ const UncontrolledForm = () => {
   // Form validation schema
   const validationSchema = Yup.object().shape({
     userType: Yup.string().required('Campo obligatorio'),
-    firstName: Yup.string().required('Campo obligatorio'),
-    lastName: Yup.string().required('Campo obligatorio'),
-    email: Yup.string().email('Dirección de correo inválida').required('Campo obligatorio'),
-    password: Yup.string().required('Campo obligatorio'),
-    confirmPassword: Yup.string()
-      .oneOf([Yup.ref('password'), null], 'Las contraseñas no coinciden')
-      .required('Campo obligatorio'),
-    companyName: Yup.string().when('userType', {
-      is: () => 'professional',
+    userName: Yup.string().when('userType', {
+      is: 'particular',
       then: () => Yup.string().required('Campo obligatorio'),
       otherwise: () => Yup.string().notRequired()
     }),
-    privacyPolicy: Yup.bool()
-      .oneOf([true], 'Debes aceptar la política de privacidad')
-      .required('Campo obligatorio')
+    companyName: Yup.string().when('userType', {
+      is: 'professional',
+      then: () => Yup.string().required('Campo obligatorio'),
+      otherwise: () => Yup.string().notRequired()
+    }),
+    email: Yup.string().email('Dirección de correo inválida').required('Campo obligatorio'),
+    password: Yup.string().required('Campo obligatorio'),
+    confirmPassword: Yup.string().oneOf([Yup.ref('password'), null], 'Las contraseñas no coinciden').required('Campo obligatorio'),
+    privacyPolicy: Yup.bool().oneOf([true], 'Es obligatorio aceptar la política de privacidad'),
   });
 
   // Form hook
   const { register, handleSubmit, formState: { errors }, watch } = useForm({
     resolver: yupResolver(validationSchema),
-    mode: 'onChange'
+    mode: 'onSubmit'
   });
   
   // User type watch
@@ -57,15 +55,12 @@ const UncontrolledForm = () => {
       </div>
       )}
 
+      {userType === 'particular' && (
       <div>
-        <input {...register('firstName')} type="text" className="form__field" placeholder="Nombre" />
-        {errors.firstName && <label className="form__field--error">{errors.firstName.message}</label>}
+        <input {...register('userName')} type="text" className="form__field" placeholder="Nombre usuario" />
+        {errors.userName && <label className="form__field--error">{errors.userName.message}</label>}
       </div>
-
-      <div>
-        <input {...register('lastName')} type="text" className="form__field" placeholder="Apellido" />
-        {errors.lastName && <label className="form__field--error">{errors.lastName.message}</label>}
-      </div>
+      )}
 
       <div>
         <input {...register('email')} type="email" className="form__field" placeholder="Email" />

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { validateField } from "../NoLibraryFormNew/utils";
 
 // Ejemplo de formulario sin librerías
-function NoLibraryForm() {
+const NoLibraryForm = () => {
   // Form state
   const [form, setForm] = useState({
     firstName: { value: undefined, error: undefined, dirty: false },

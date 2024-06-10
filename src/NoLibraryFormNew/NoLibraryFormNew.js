@@ -3,7 +3,7 @@ import { useFormStatus } from 'react-dom';
 import { submitForm, validateField } from './utils';
 
 // Ejemplo de formulario sin librerías utilizando el nuevo useActionState (experimental)
-function NoLibraryFormNew () {
+const NoLibraryFormNew = () => {
   // Handle form
   const updateFormAction = async (previousState, formData) => {
     const newFormValue = {
@@ -73,7 +73,7 @@ function NoLibraryFormNew () {
   );
 }
 
-function SubmitButton() {
+const SubmitButton = () => {
   const { pending } = useFormStatus();
 
   return (
